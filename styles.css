@@ -1,0 +1,125 @@
+*{
+    font-family: monospace;
+}
+
+body{
+    margin-top: 150px;
+	text-align: center;
+	/*font-family: monospace;*/
+	/*position: relative;*/
+	background-image: url("images/exit.jpg");
+	background-repeat: no-repeat;
+	background-size: cover;
+	background-attachment: fixed;
+}
+#start_panel{
+    font-size: 20px;
+	width: 500px;
+	border-radius: 20px;
+	margin: auto;
+	padding: 30px 0 30px 0;
+	background-color: white;
+	opacity: 0.95;
+}
+#chat_history{
+	display: block;
+	width: 500px;
+	height: 250px;
+	margin: auto;
+	font-size: 14px;
+}
+.hidden{
+	display: none;
+}
+.scroll_box{
+	font-family: Helvetica, sans-serif;
+	line-height: 16px;
+	padding: 5px;
+	overflow: auto;
+}
+#alert_box{
+	color: red;
+}
+#requirement_box{
+	color: teal;
+}
+#alert_box,#requirement_box{
+	width: 300px;
+	font-weight: bold;
+	margin: auto;
+}
+#display_username{
+	display: inline-block;
+	color: teal;
+}
+#message{
+	width: 300px;
+	height: 20px;
+	overflow: scroll;
+	scroll-behavior: auto;
+	resize: none;
+}
+#select_room{
+	width: 85px;
+	text-align: center;
+}
+#start{
+	width: 150px;
+	height: 80px;
+	font-size: 18px;
+	font-weight: bold;
+	background-color: teal;
+}
+#sensative_notice{
+	color: red;
+}
+#admin_login_button, #back_button, #user_exit_button{
+	position: absolute;
+    margin: 10px;
+    padding: 10px;
+	top: 0;
+	right: 0;
+	width: 120px;
+	font-size: 18px;
+	background-color: turquoise;
+}
+
+#change_filter{
+	width: 150px;
+	height: 30px;
+	margin-left: 30px;
+	margin-bottom: -20px;
+}
+#admin_panel{
+	width: 500px;
+	border-radius: 20px;
+	margin: auto;
+	padding: 30px 0 30px 0;
+	font-size: 14px;
+	background-color: white;
+	opacity: 0.95;
+}
+#admin_menu{
+	text-align: initial;
+	 padding: 0 30px 0 30px;
+}
+#change_filter{
+	text-align: left;
+}
+#log_in_failed{
+	color: red;
+}
+#clear_content select{
+	width: 90px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+#usage_logs{
+	text-align: center; 
+	width: 350px;
+	height: 100px;
+	overflow: auto; 
+	font-size: 10px;
+	border: 1px solid black;
+	margin: auto;
+}

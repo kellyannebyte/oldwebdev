@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Memory Matching Madness</title>
+    <style>
+      body {
+        background-color: black;
+        color: white;
+        font-family: monospace;
+        font-size: 125%;
+        text-align: center;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .easy_container {
+        width: 400px;
+        height: 300px;
+        margin: auto;
+      }
+      .medium_container {
+        width: 500px;
+        height: 400px;
+        margin: auto;
+      }
+      .hard_container {
+        width: 600px;
+        height: 500px;
+        margin: auto;
+      }
+
+      .token {
+        width: 100px;
+        height: 100px;
+      }
+
+      #button_playgame{
+        font-family: monospace;
+        font-size: 20px;
+      }
+
+      #restart{
+        font-family: monospace;
+        font-size: 20px;
+      }
+
+      #difficulty{
+        font-family: monospace;
+        font-size: 20px;
+      }
+
+      #directions{
+        font-size: 10px;
+      }
+
+    </style>
+  </head>
+  <body>
+    <h1>Memory Matching Madness!</h1>
+
+    <audio id="wrong_sound">
+      <source src="resources/wrong.wav" type="audio/wav" />
+    </audio>
+    <audio id="correct_sound">
+      <source src="resources/correct.wav" type="audio/wav" />
+    </audio>
+    <div id="panel_start">
+      <p>Play a fast-paced game of "memory" and try and beat your best time!</p>
+      <p id="directions">Select the Difficulty and Press Start.</p>
+        <select name="Difficulty" id="difficulty">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      <button id="button_playgame">Start!</button>
+    </div>
+
+    <div id="panel_game" class="hidden">
+      <div id="timer">Time elapsed: 0 seconds</div>
+      <div id="token_container"></div>
+    </div>
+
+    <div id="panel_gameover" class="hidden">
+      <p>Your time: </p>
+      <h3>Leader Board</h3>
+      <p>First Place: </p>
+      <p>Second Place: </p>
+      <p>Third Place: </p>
+      <button id="restart">Play Again!</button>
+    </div>
+
+    <script>
+      // DOM queries
+      let panel_start = document.getElementById("panel_start");
+      let button_playgame = document.getElementById("button_playgame");
+      let panel_game = document.getElementById("panel_game");
+      let timer = document.getElementById("timer");
+      let token_container = document.getElementById("token_container");
+      let difficulty = document.getElementById("difficulty");
+      let panel_gameover = document.getElementById("panel_gameover");
+      let wrong_sound = document.getElementById("wrong_sound");
+      let correct_sound = document.getElementById("correct_sound");
+      let restart = document.getElementById("restart");
+      let timerInterval;
+      let currentTime = 0;
+      let token1 = false;
+      let token2 = false;
+      let win;
+
+      //lower volume of sound because I don't wanna hurt my own ears
+      correct_sound.volume = 0.2;
+      wrong_sound.volume = 0.2;
+
+      console.log(difficulty);      
+
+      // local storage for each scores in each difficulty
+      if (!window.localStorage.getItem('easy_score1')){
+        window.localStorage.setItem('easy_score1', 99999);
+      }
+      if (!window.localStorage.getItem('easy_score2')){
+        window.localStorage.setItem('easy_score2', 99999);
+      }
+      if (!window.localStorage.getItem('easy_score3')){
+        window.localStorage.setItem('easy_score3', 99999);
+      }
+      if (!window.localStorage.getItem('easy_name1')){
+        window.localStorage.setItem('easy_name1', 'Somebody');
+      }
+      if (!window.localStorage.getItem('easy_name2')){
+        window.localStorage.setItem('easy_name2', 'Somebody');
+      }
+      if (!window.localStorage.getItem('easy_name3')){
+        window.localStorage.setItem('easy_name3', 'Somebody');
+      }
+
+      if (!window.localStorage.getItem('medium_score1')){
+        window.localStorage.setItem('medium_score1', 99999);
+      }
+      if (!window.localStorage.getItem('medium_score2')){
+        window.localStorage.setItem('medium_score2', 99999);
+      }
+      if (!window.localStorage.getItem('medium_score3')){
+        window.localStorage.setItem('medium_score3', 99999);
+      }
+      if (!window.localStorage.getItem('medium_name1')){
+        window.localStorage.setItem('medium_name1', 'Somebody');
+      }
+      if (!window.localStorage.getItem('medium_name2')){
+        window.localStorage.setItem('medium_name2', 'Somebody');
+      }
+      if (!window.localStorage.getItem('medium_name3')){
+        window.localStorage.setItem('medium_name3', 'Somebody');
+      }
+
+      if (!window.localStorage.getItem('hard_score1')){
+        window.localStorage.setItem('hard_score1', 99999);
+      }
+      if (!window.localStorage.getItem('hard_score2')){
+        window.localStorage.setItem('hard_score2', 99999);
+      }
+      if (!window.localStorage.getItem('hard_score3')){
+        window.localStorage.setItem('hard_score3', 99999);
+      }
+      if (!window.localStorage.getItem('hard_name1')){
+        window.localStorage.setItem('hard_name1', 'Somebody');
+      }
+      if (!window.localStorage.getItem('hard_name2')){
+        window.localStorage.setItem('hard_name2', 'Somebody');
+      }
+      if (!window.localStorage.getItem('hard_name3')){
+        window.localStorage.setItem('hard_name3', 'Somebody');
+      }
+
+
+      // once the start button is pressed
+      button_playgame.addEventListener("click", function (event) {
+        token_container.classList.add(difficulty.value+'_container');
+        panel_start.classList.add("hidden");
+        panel_game.classList.remove("hidden");
+        timerInterval = setInterval(function () {
+          currentTime += 1;
+          timer.innerHTML = "Time elapsed: " + currentTime + " seconds";
+        }, 1000);
+        let assets = [ // pokemon images within the array
+          "snorlax.png",
+          "electrabuzz.png",
+          "chansey.png",
+          "oddish.png",
+          "pikachu.png",
+          "paras.png",
+          "arcanine.png",
+          "ponita.png",
+          "venonat.png",
+          "eggsecute.png",
+          "machop.png",
+          "pidgey.png",
+          "psyduck.png",
+          "tauros.png",
+          "vulpix.png",
+          "gloom.png",
+          "krabby.png",
+          "butterfree.png",
+          "bulbasaur.png",
+          "clefairy.png",
+          "koffing.png",
+          "goldeen.png",
+          "magikarp.png",
+          "beedrill.png",
+          "lapras.png",
+          "meowth.png",
+          "ekans.png",
+          "jigglypuff.png",
+          "horsea.png",
+          "polywog.png",
+          "sandshrew.png",
+          "rattata.png",
+          "gengar.png",
+          "eevee.png",
+          "bellsprout.png",
+          "squirtle.png",
+          "seel.png",
+          "caterpie.png",
+        ];
+        let picked = [];
+        let limit;
+        if (difficulty.value=="easy"){
+          limit = 12;
+        } else if (difficulty.value=="medium"){
+          limit = 20;
+        } else if (difficulty.value=="hard"){
+          limit = 30;
+        }
+        while (picked.length < limit) {
+          let i = parseInt(Math.random() * assets.length);
+          picked.push(assets[i]);
+          picked.push(assets[i]);
+          assets.splice(i, 1);
+        }
+
+        // makes sure each tile has a different pokemon
+        for (let i = 0; i < 9999; i++) {
+          a = parseInt(Math.random() * picked.length);
+          b = parseInt(Math.random() * picked.length);
+          if (a != b) {
+            temp = picked[a];
+            picked[a] = picked[b];
+            picked[b] = temp;
+          }
+        }
+
+        for (let i = 0; i < picked.length; i++) {
+          let tempImage = document.createElement("img");
+          tempImage.src = "resources/pokeball.png";
+          tempImage.classList.add("token");
+          tempImage.dataset.secret = "resources/" + picked[i];
+          tempImage.dataset.discover = false;
+          token_container.appendChild(tempImage);
+          tempImage.onclick = function (event) {
+            if (token1 == false) {
+              event.currentTarget.src = event.currentTarget.dataset.secret;
+              token1 = event.currentTarget;
+              token1.style.pointerEvents = 'none';
+            }
+            else if (token1 != false && token2 == false){
+              event.currentTarget.src = event.currentTarget.dataset.secret;
+              token2 = event.currentTarget;
+              token2.style.pointerEvents = 'none';
+              if (token1.dataset.secret == token2.dataset.secret) {
+                correct_sound.play();
+                token1.dataset.discover = true;
+                token2.dataset.discover = true;
+                token1.onclick = null;
+                token2.onclick = null;
+                token1 = false;
+                token2 = false;
+                let tokens = document.querySelectorAll('.token');
+                win = true;
+                for (let i=0;i<tokens.length;i++){
+                  if (tokens[i].dataset.discover == "false"){
+                    win = false;
+                  }
+                } 
+                if (win){ // player wins the game, end timer and organize/display scores
+                  clearInterval( timerInterval );
+                  panel_game.classList.add("hidden");
+                  panel_gameover.classList.remove("hidden");
+                  panel_gameover.firstElementChild.innerHTML = `Your time: ${currentTime}`;
+                  let temp;
+                  let temp_name;
+                  console.log(panel_gameover.children);
+                  if (window.localStorage.getItem(difficulty.value+'_score3') > currentTime){
+                    let name = prompt("Please enter your name: ");
+                    window.localStorage.setItem(difficulty.value+'_score3', currentTime);
+                    window.localStorage.setItem(difficulty.value+'_name3', name);
+                    if (window.localStorage.getItem(difficulty.value+'_score2') > currentTime){
+                      temp = window.localStorage.getItem(difficulty.value+'_score2');
+                      window.localStorage.setItem(difficulty.value+'_score2', currentTime);
+                      window.localStorage.setItem(difficulty.value+'_score3', temp);
+                      temp_name = window.localStorage.getItem(difficulty.value+'_name2');
+                      window.localStorage.setItem(difficulty.value+'_name2', name);
+                      window.localStorage.setItem(difficulty.value+'_name3', temp_name);
+                      if (window.localStorage.getItem(difficulty.value+'_score1') > currentTime){
+                        temp = window.localStorage.getItem(difficulty.value+'_score1');
+                        window.localStorage.setItem(difficulty.value+'_score1', currentTime);
+                        window.localStorage.setItem(difficulty.value+'_score2', temp);
+                        temp_name = window.localStorage.getItem(difficulty.value+'_name1');
+                        window.localStorage.setItem(difficulty.value+'_name1', name);
+                        window.localStorage.setItem(difficulty.value+'_name2', temp_name);
+                      }
+                    }
+                  }
+                  panel_gameover.children[0].innerHTML = `Your time: ${currentTime}`;
+                  panel_gameover.children[2].innerHTML = `First Place: ${window.localStorage.getItem(difficulty.value+'_score1')} - First Place Name: ${window.localStorage.getItem(difficulty.value+'_name1')}`;
+                  panel_gameover.children[3].innerHTML = `Second Place: ${window.localStorage.getItem(difficulty.value+'_score2')} - Second Place Name: ${window.localStorage.getItem(difficulty.value+'_name2')}`;
+                  panel_gameover.children[4].innerHTML = `Third Place: ${window.localStorage.getItem(difficulty.value+'_score3')} - Third Place Name: ${window.localStorage.getItem(difficulty.value+'_name3')}`;
+                } 
+              } else {
+                wrong_sound.play();
+                setTimeout(function () {
+                  token1.style.pointerEvents = 'auto';
+                  token2.style.pointerEvents = 'auto';
+                  token1.src = "resources/pokeball.png";
+                  token2.src = "resources/pokeball.png";
+                  token1 = false;
+                  token2 = false;
+                }, 1000);
+               
+              }
+            }
+          };
+        }
+
+        // once restart button is clicked, recursive call to start button
+        restart.onclick = function(event){
+          let tokens = document.querySelectorAll('.token');
+          for (let i=0;i<tokens.length;i++){
+            tokens[i].remove();
+          }
+          currentTime = 0;
+          panel_gameover.classList.add('hidden');
+          panel_game.classList.remove('hidden');
+          button_playgame.click();
+        }
+      });
+    </script>
+  </body>
+</html>

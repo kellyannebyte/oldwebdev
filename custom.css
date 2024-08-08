@@ -1,0 +1,85 @@
+*{
+  font-family: Serif, serif;
+  color: white;
+  
+}
+
+a:link {
+  color: #8bd48b;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: #8bd48b;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #8bd48b;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: #8bd48b;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+
+body{
+  background-image: url('images/background2.png');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position : center;
+  background-size: cover;
+}
+
+
+header{
+  display : flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#logo{
+  text-align: center;
+  margin-top: 30px;
+}
+
+#wrap {
+  background-color: transparent;
+  display: flex;
+  padding : 20px;
+  min-height : 400px;
+  margin-left: 45px;
+  margin-right: 45px;
+  margin-top : 0px;
+  margin-bottom: 45px;
+}
+
+
+#main-body{
+  flex-grow: 1;
+  display: flex;
+  padding: 0px;
+  background-color: rgba(133,142,109, 1);
+}
+
+.col-md-5{
+  padding-top: 80px;
+}
+
+.col-lg-4{
+  padding-top: 10px;
+  border: solid 4px rgba(133,142,109, 1);
+  background-color: rgba(102,114,73, 0.8);
+}
+
+.col-md-3{
+  padding-top: 10px;
+  border: solid 4px rgba(133,142,109, 1);
+  background-color: rgba(102,114,73, 0.8);
+}

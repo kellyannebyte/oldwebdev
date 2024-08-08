@@ -1,1 +1,0 @@
-CREATE TABLE chats (id integer primary key autoincrement, nickname text, message text);
